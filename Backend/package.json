@@ -1,0 +1,42 @@
+{
+  "name": "jean-fabri-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Backend de Papelería Jean-Fabri: API REST (Express + Socket.io) sobre MongoDB Atlas.",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "seed:admin": "node scripts/create-admin.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFiles": [
+      "<rootDir>/tests/helpers/env.js"
+    ],
+    "testTimeout": 30000
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1164.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.12.0",
+    "multer": "^2.5.0",
+    "socket.io": "^4.8.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "mongodb-memory-server": "^11.3.0",
+    "supertest": "^7.3.2"
+  }
+}
