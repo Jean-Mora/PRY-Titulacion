@@ -14,10 +14,17 @@ const LoginPage = lazy(() => import('./pages/auth/LoginPage.jsx'));
 const AdminLayout = lazy(() => import('./layouts/AdminLayout.jsx'));
 const DashboardPage = lazy(() => import('./pages/admin/DashboardPage.jsx'));
 const UpcomingPage = lazy(() => import('./pages/admin/UpcomingPage.jsx'));
+const CategoriesPage = lazy(() => import('./pages/admin/categories/CategoriesPage.jsx'));
+const ProductsPage = lazy(() => import('./pages/admin/products/ProductsPage.jsx'));
+const ProductFormPage = lazy(() => import('./pages/admin/products/ProductFormPage.jsx'));
 
 // Pantallas ya construidas; las demás secciones muestran UpcomingPage.
 const ADMIN_PAGES = {
   '': DashboardPage,
+  categorias: CategoriesPage,
+  productos: ProductsPage,
+  'productos/nuevo': ProductFormPage,
+  'productos/:id': ProductFormPage,
 };
 
 export default function App() {
@@ -47,7 +54,8 @@ export default function App() {
         >
           {ADMIN_SECTIONS.map((section) => {
             const Page = ADMIN_PAGES[section.path];
-            const element = Page ? <Page /> : <UpcomingPage section={section} />;
+            // key por ruta: "nuevo" y ":id" usan el mismo formulario pero no deben compartir estado.
+            const element = Page ? <Page key={section.path} /> : <UpcomingPage section={section} />;
             return (
               <Route key={section.path || 'index'} element={<ProtectedRoute roles={section.roles} />}>
                 {section.path === '' ? <Route index element={element} /> : <Route path={section.path} element={element} />}

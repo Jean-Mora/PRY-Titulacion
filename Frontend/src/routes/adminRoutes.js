@@ -15,6 +15,8 @@ export const ADMIN_SECTIONS = [
   { path: 'venta', label: 'Venta rápida', icon: '🧾', roles: [ADMIN, VENDEDOR], increment: 3 },
   { path: 'cotizaciones', label: 'Cotizaciones', icon: '💬', roles: [ADMIN, VENDEDOR], increment: 5 },
   { path: 'productos', label: 'Productos', icon: '📦', roles: [ADMIN, VENDEDOR], increment: 2, end: true },
+  { path: 'productos/nuevo', label: 'Nuevo producto', icon: '📦', roles: [ADMIN], increment: 2, inMenu: false },
+  { path: 'productos/:id', label: 'Editar producto', icon: '📦', roles: [ADMIN], increment: 2, inMenu: false },
   { path: 'productos/importar', label: 'Importar CSV', icon: '⬆️', roles: [ADMIN], increment: 2 },
   { path: 'categorias', label: 'Categorías', icon: '🗂️', roles: [ADMIN], increment: 2 },
   { path: 'inventario', label: 'Inventario', icon: '📊', roles: [ADMIN], increment: 3 },

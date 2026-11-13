@@ -3,7 +3,7 @@ const SIZES = { sm: 'h-4 w-4 border-2', md: 'h-8 w-8 border-[3px]', lg: 'h-12 w-
 /** Indicador de carga. Con fullScreen ocupa toda la pantalla (carga inicial, lazy). */
 export default function Spinner({ size = 'md', label = 'Cargando…', fullScreen = false }) {
   const spinner = (
-    <span role="status" className="inline-flex items-center gap-3 text-slate-500">
+    <span role="status" className="inline-flex items-center gap-3 text-slate-500 dark:text-slate-400">
       <span
         aria-hidden="true"
         className={`${SIZES[size]} animate-spin rounded-full border-brand-600 border-t-transparent`}

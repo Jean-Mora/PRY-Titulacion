@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth.js';
 import Button from '../../components/Button.jsx';
 import Input from '../../components/Input.jsx';
 import Spinner from '../../components/Spinner.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,19 +61,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-white to-amber-50 px-4 py-10">
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 dark:from-slate-950 via-white dark:via-slate-900 to-amber-50 dark:to-slate-950 px-4 py-10">
+      <ThemeToggle className="absolute right-4 top-4" />
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <span aria-hidden="true" className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-700 text-2xl font-bold text-white shadow-lg">
             JF
           </span>
-          <h1 className="mt-4 text-2xl font-bold text-slate-900">Panel Jean-Fabri</h1>
-          <p className="mt-1 text-sm text-slate-600">Inicia sesión para gestionar el inventario.</p>
+          <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Panel Jean-Fabri</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Inicia sesión para gestionar el inventario.</p>
         </div>
 
-        <form noValidate onSubmit={handleSubmit} className="space-y-5 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <form noValidate onSubmit={handleSubmit} className="space-y-5 rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
           {serverError && (
-            <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+            <div role="alert" className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/50 px-3 py-2.5 text-sm text-red-700 dark:text-red-300">
               {serverError}
             </div>
           )}
@@ -103,7 +105,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-sm">
-          <Link to="/" className="font-medium text-brand-700 hover:underline">
+          <Link to="/" className="font-medium text-brand-700 dark:text-brand-400 hover:underline">
             ← Volver al catálogo
           </Link>
         </p>

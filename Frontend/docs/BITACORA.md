@@ -6,7 +6,7 @@ Cada entrada indica la fecha, la rama y los archivos afectados.
 | Semanas | Incremento | Estado |
 |---|---|---|
 | 1–2 | 1. Arquitectura y autenticación | ✅ Completado (pendiente integración con el backend real) |
-| 3–4 | 2. Productos e importación | Pendiente |
+| 3–4 | 2. Productos e importación | 🔶 En curso: CRUD de categorías y productos + modo oscuro listos · faltan imagen e importación CSV |
 | 5–6 | 3. Inventario | Pendiente |
 | 7–8 | 4. Catálogo público | Pendiente |
 | 9 | 5. Cotizaciones | Pendiente |
@@ -134,3 +134,75 @@ Resultado: **4 archivos, 15 pruebas, todas pasan.**
 - Probar el login contra el backend real (`POST /api/auth/login`, `GET /api/auth/me`) y ajustar
   `api/auth.js` si el formato de respuesta difiere del contrato del README.
 - Revisión con el propietario de la papelería.
+
+---
+
+## Incremento 2 — Productos e importación (semanas 3–4) · parte 1: CRUD + modo oscuro
+
+- **Fecha:** 13 de noviembre de 2026
+- **Rama:** `inc-2/products`
+- **Entregable del plan:** admin/products, admin/categories, ImportCsvPage.
+  En esta parte: **pantallas de categorías y productos** (listar, crear, editar, eliminar) y
+  **modo oscuro** (pedido adicional, no estaba en el plan). Queda ImportCsvPage y la imagen.
+
+### 1. Modo oscuro
+
+| Archivo | Qué se agregó |
+|---|---|
+| `src/index.css` | `@custom-variant dark` (Tailwind v4): `dark:` se activa con la clase `dark` en `<html>`. `color-scheme` para que barras de scroll y selects nativos también cambien. Tonos `brand-300/400/900/950`. |
+| `index.html` | Script corto en `<head>` que aplica el tema **antes** de que cargue React (evita el destello blanco). Dos `theme-color` (claro/oscuro) para la barra del navegador en el celular. |
+| `context/ThemeContext.jsx` | Preferencia `system` / `light` / `dark`, guardada en `localStorage.jf_theme`. Con `system` sigue al sistema operativo y reacciona si este cambia. |
+| `hooks/useTheme.js` | Acceso al tema. |
+| `components/ThemeToggle.jsx` | Botón con ícono (monitor / sol / luna); cada clic pasa a la siguiente opción. Nombre accesible que dice el tema actual y el siguiente. |
+| `main.jsx`, `test/utils.jsx` | `ThemeProvider` envuelve la app y las pruebas. |
+| Layouts y páginas existentes | Se agregó `dark:` a cada color claro con **una sola tabla de equivalencias** (p. ej. `bg-white` → `dark:bg-slate-900`, `text-slate-900` → `dark:text-slate-100`, `border-slate-200` → `dark:border-slate-800`) para que todo sea coherente. El botón está en el catálogo, el login y el panel. |
+
+**Decisiones**
+- Por defecto se respeta el modo del sistema operativo: es lo que espera la mayoría de usuarios.
+- Tres estados en un solo botón (no un interruptor de dos) para poder volver a "sistema".
+
+### 2. Componentes y utilidades compartidas (los pide la arquitectura)
+
+| Archivo | Para qué |
+|---|---|
+| `components/Select.jsx`, `Textarea.jsx` | Mismos estilos y accesibilidad que `Input` (etiqueta, error, ayuda). |
+| `components/Modal.jsx` | Diálogo accesible: `role="dialog"`, cierra con Escape o clic fuera, enfoca el primer campo y devuelve el foco al cerrar; en móvil sale desde abajo. |
+| `components/Badge.jsx`, `Alert.jsx`, `Pagination.jsx` | Etiquetas de estado, mensajes (error con `role="alert"`) y paginación. |
+| `hooks/useFetch.js` | Carga con estado de carga/error, `reload()` y cancelación de la petición anterior. |
+| `hooks/useDebounce.js` | Espera 300 ms tras la última tecla (buscador). |
+| `utils/format.js` | `formatUSD` y fechas con formato `es-EC`. |
+| `utils/apiErrors.js` | Convierte `details` del backend (`body.name`) en errores por campo del formulario. |
+| `api/categories.js`, `api/products.js` | Funciones de la API; las páginas nunca llaman a `fetch`. |
+
+### 3. Pantallas
+
+| Archivo | Ruta | Qué hace |
+|---|---|---|
+| `pages/admin/categories/CategoriesPage.jsx` | `/admin/categorias` (admin) | Tabla con nombre, dirección pública, descripción y nº de productos. Crear y editar en un modal; eliminar con confirmación (muestra el aviso del backend si tiene productos). |
+| `pages/admin/products/ProductsPage.jsx` | `/admin/productos` (admin y vendedor) | Buscador (300 ms), filtros por categoría y estado, **guardados en la URL** (`?q=&categoria=&estado=&pagina=`). Columnas: producto (SKU, nº de variantes, etiquetas), categoría, precio, costo, stock (**Agotado** / **bajo** si ≤ mínimo), estado. El **vendedor solo consulta**: no ve crear/editar/eliminar. |
+| `pages/admin/products/ProductFormPage.jsx` | `/admin/productos/nuevo` y `/admin/productos/:id` (admin) | Datos generales, etiquetas, activo y variantes. Valida antes de enviar (SKU, precio con 2 decimales, categoría…) y muestra los errores del backend junto a cada campo. Si no hay categorías, enlaza a crearlas. |
+| `pages/admin/products/components/VariantEditor.jsx` | — | Filas editables (SKU, color, tamaño, modelo). El stock se muestra pero no se edita; **no deja quitar una variante con stock**. Sin variantes avisa que se creará la "Única". |
+| `routes/adminRoutes.js`, `App.jsx` | — | Rutas nuevas (fuera del menú) y páginas cargadas con `React.lazy`. `key` por ruta para que "nuevo" y "editar" no compartan estado. |
+
+### 4. Pruebas — total: 8 archivos, 32 pruebas, todas pasan
+
+| Archivo | Qué verifica |
+|---|---|
+| `components/ThemeToggle.test.jsx` | Sigue al sistema; ciclo sistema → claro → oscuro → sistema; guarda y respeta la preferencia. |
+| `pages/admin/categories/CategoriesPage.test.jsx` | Listado; creación y recarga; validación sin llamar a la API; error 409 al eliminar. |
+| `pages/admin/products/ProductsPage.test.jsx` | Precio, costo, estado y avisos de stock; acciones del admin; vendedor solo lectura; la búsqueda hace **una** petición al dejar de escribir; eliminar con confirmación. |
+| `pages/admin/products/ProductFormPage.test.jsx` | Validación; creación con variantes **sin enviar stock**; edición que conserva `_id` y bloquea quitar variantes con stock; error de SKU repetido; producto inexistente. |
+
+### 5. Verificación en el navegador
+
+Contra el backend real (puerto 3999, MongoDB temporal): login → crear categoría → crear producto
+con 2 variantes → listado con "Agotado" y "Nuevo" → abrir edición. Revisado en **oscuro y claro**,
+y en **ancho de celular** (sin desplazamiento horizontal de la página; la tabla se desplaza dentro de
+su recuadro). Sin errores en la consola. `npm run build` correcto: las pantallas nuevas van en
+archivos aparte (`CategoriesPage`, `ProductsPage`, `ProductFormPage`), así que el catálogo público no
+las descarga.
+
+### 6. Pendiente del incremento 2
+
+- `ImportCsvPage` (vista previa y errores por fila).
+- Subida de imagen del producto (cuando el backend tenga S3).

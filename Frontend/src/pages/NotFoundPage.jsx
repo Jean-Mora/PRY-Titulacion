@@ -8,7 +8,7 @@ export default function NotFoundPage() {
       title="Página no encontrada"
       description="La dirección que buscas no existe o fue movida."
       action={
-        <Link to="/" className="font-semibold text-brand-700 hover:underline">
+        <Link to="/" className="font-semibold text-brand-700 dark:text-brand-400 hover:underline">
           Ir al catálogo
         </Link>
       }

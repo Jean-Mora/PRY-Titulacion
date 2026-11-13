@@ -5,8 +5,8 @@ export default function EmptyState({ icon = '📄', title, description, action }
       <span aria-hidden="true" className="mb-4 text-5xl">
         {icon}
       </span>
-      <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-      {description && <p className="mt-2 text-sm text-slate-600">{description}</p>}
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{title}</h2>
+      {description && <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );
