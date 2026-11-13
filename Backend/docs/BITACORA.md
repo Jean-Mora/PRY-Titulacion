@@ -6,7 +6,7 @@ Cada entrada indica la fecha, la rama y los archivos afectados.
 | Semanas | Incremento | Estado |
 |---|---|---|
 | 1–2 | 1. Arquitectura y autenticación | ✅ Código y pruebas completos · ⏳ despliegue de prueba en EC2 pendiente (guía lista) |
-| 3–4 | 2. Productos e importación | Pendiente |
+| 3–4 | 2. Productos e importación | 🔶 En curso: CRUD de categorías y productos listo · faltan subida a S3 e importación CSV |
 | 5–6 | 3. Inventario | Pendiente |
 | 7–8 | 4. Catálogo público | Pendiente |
 | 9 | 5. Cotizaciones | Pendiente |
@@ -174,3 +174,61 @@ vacío. Se resolvió entregándole el módulo con la opción pública `runtimeAd
 - **Despliegue de prueba en EC2**: requiere la cuenta de AWS y Atlas; los pasos están en
   [`DESPLIEGUE_EC2.md`](DESPLIEGUE_EC2.md) con una lista de verificación.
 - Probar el login del frontend contra este backend (`Frontend` → `npm run dev`, backend en el puerto 3000).
+
+---
+
+## Incremento 2 — Productos e importación (semanas 3–4) · parte 1: CRUD
+
+- **Fecha:** 13 de noviembre de 2026
+- **Rama:** `inc-2/products` (sale de `inc-1/auth`, que aún no se fusiona a `main`)
+- **Entregable del plan:** categories, products, variantes, subida a S3, importación CSV.
+  En esta parte: **CRUD de categorías y de productos con variantes**. Quedan S3 e importación CSV.
+
+### 1. Módulo `categories` (`/api/categories`)
+
+| Archivo | Qué hace |
+|---|---|
+| `categories.schema.js` | Nombre 2–60, descripción hasta 300, slug opcional (minúsculas, números y guiones). El PATCH rechaza campos desconocidos y cuerpo vacío. |
+| `categories.service.js` | `list` (ordenada por nombre, con `productCount` calculado con una agregación), `create`, `update`, `remove`. Nombre o slug repetido → 409 `CATEGORY_TAKEN`. **No se elimina una categoría con productos** → 409 `CATEGORY_IN_USE`, con la cantidad en el mensaje. |
+| `categories.controller.js` / `categories.routes.js` | `GET` público; `POST`, `PATCH`, `DELETE` solo admin. `DELETE` responde 204. |
+
+**Decisiones**
+- El listado no se pagina: una papelería tiene decenas de categorías, no miles.
+- El slug **no cambia** al renombrar, para no romper enlaces ya compartidos (`/categoria/:slug`).
+
+### 2. Módulo `products` (`/api/products`)
+
+| Archivo | Qué hace |
+|---|---|
+| `products.schema.js` | SKU (letras, números, `.`, `-`, `_`; se guarda en mayúsculas), nombre, categoría, precio y costo con **máximo 2 decimales**, `stockMin` entero, etiquetas `nuevo`/`oferta`, `active`, hasta 50 variantes sin SKUs repetidos. **No acepta `stock`**: se rechaza con 400. Filtros del listado: `q`, `categoryId`, `active`, paginación. |
+| `products.service.js` | Reglas de negocio (abajo). Categoría inexistente → 400 `CATEGORY_NOT_FOUND`. SKU usado por otro producto (como SKU principal o de variante) → 409 `SKU_TAKEN` indicando qué producto lo usa. |
+| `products.controller.js` / `products.routes.js` | `GET` (lista y detalle) para admin y vendedor; `POST`, `PATCH`, `DELETE` solo admin. |
+| `products.model.js` | Se agregó el virtual `category` (se puebla con nombre y slug sin cambiar `categoryId`) y se activó `toJSON` con virtuales en las variantes para que llegue su `label` ("Azul · A4" / "Única"). |
+
+**Reglas de las variantes (Arquitectura §5: el stock solo cambia por movimientos)**
+- Al **crear**, toda variante empieza con stock 0. Sin variantes → se crea la "Única".
+- Al **editar**, las variantes se envían completas:
+  - con `_id` → se actualizan SKU/color/tamaño/modelo y **conservan su stock**;
+  - sin `_id` → variante nueva con stock 0;
+  - las que no se envían se eliminan, **salvo que tengan stock** → 409 `VARIANT_HAS_STOCK`
+    (hay que registrar antes un ajuste a 0, incremento 3);
+  - un `_id` de otro producto → 400 `VARIANT_NOT_FOUND`.
+- **Eliminar** un producto: 409 si tiene stock (`PRODUCT_HAS_STOCK`) o movimientos en el kárdex
+  (`PRODUCT_HAS_MOVEMENTS`); en esos casos se desactiva (`active: false`).
+
+### 3. Pruebas nuevas — total: 6 archivos, 99 pruebas, todas pasan
+
+| Archivo | Qué cubre |
+|---|---|
+| `tests/categories/categories.test.js` | Listado público con `productCount`; creación con slug automático; 401/403; duplicado 409; validación; edición conserva el slug; 404; eliminar vacía (204) y con productos (409). |
+| `tests/products/products.test.js` | Creación con variante "Única" y con variantes en 0; rechazo de `stock`; precio con 3 decimales, SKU inválido, categoría inexistente; SKU repetido de producto y de variante; vendedor no crea; listado con stock total, costo y categoría; búsqueda por nombre y por SKU de variante; filtros; edición conservando stock; no quitar variante con stock; variante ajena; eliminar sin stock, con stock y con movimientos. |
+
+### 4. Verificación manual
+
+Backend en el puerto 3999 con un MongoDB temporal (sin tocar la base real) + frontend:
+crear categoría → crear producto con 2 variantes → ver listado → abrir edición. Todo correcto.
+
+### 5. Pendiente del incremento 2
+
+- `POST /api/products/:id/image` → subida a S3 (necesita el bucket y el rol de IAM).
+- `POST /api/products/import` → importación CSV con reporte de errores por fila.

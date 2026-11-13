@@ -68,7 +68,7 @@ Respuesta de error (siempre la misma forma):
 
 Listados paginados: `{ items, page, limit, total, pages }` (`?page=1&limit=20`, máx. 100).
 
-### Endpoints disponibles (incremento 1)
+### Endpoints disponibles (incrementos 1 y 2)
 
 | Método y ruta | Acceso | Respuesta |
 |---|---|---|
@@ -79,5 +79,14 @@ Listados paginados: `{ items, page, limit, total, pages }` (`?page=1&limit=20`, 
 | `GET /api/users/:id` | Admin | `{ user }` |
 | `POST /api/users` | Admin | `201 { user }` — `{ name, email, password, role }` |
 | `PATCH /api/users/:id` | Admin | `{ user }` — `{ name?, email?, password?, role?, active? }` |
+| `GET /api/categories` | Público | `{ items }` con `productCount` |
+| `POST /api/categories` | Admin | `201 { category }` — `{ name, description?, slug? }` |
+| `PATCH /api/categories/:id` | Admin | `{ category }` |
+| `DELETE /api/categories/:id` | Admin | `204` (409 si tiene productos) |
+| `GET /api/products` | Admin, vendedor | Listado paginado con stock y costo (`q`, `categoryId`, `active`) |
+| `GET /api/products/:id` | Admin, vendedor | `{ product }` |
+| `POST /api/products` | Admin | `201 { product }` — variantes sin stock (empiezan en 0) |
+| `PATCH /api/products/:id` | Admin | `{ product }` — variantes con `_id` conservan su stock |
+| `DELETE /api/products/:id` | Admin | `204` (409 si tiene stock o movimientos) |
 
 Autenticación: cabecera `Authorization: Bearer <token>`. El token dura 8 horas.
