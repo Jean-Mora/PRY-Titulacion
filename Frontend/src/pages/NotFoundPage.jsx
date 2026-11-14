@@ -4,7 +4,7 @@ import EmptyState from '../components/EmptyState.jsx';
 export default function NotFoundPage() {
   return (
     <EmptyState
-      icon="🧭"
+      icon="compass"
       title="Página no encontrada"
       description="La dirección que buscas no existe o fue movida."
       action={

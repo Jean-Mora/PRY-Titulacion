@@ -61,7 +61,7 @@ describe('ProductFormPage', () => {
     await user.selectOptions(screen.getByLabelText('Categoría'), 'c1');
     await user.type(screen.getByLabelText('Precio de venta (USD)'), '0.45');
     await user.click(screen.getByRole('checkbox', { name: 'Nuevo' }));
-    await user.click(screen.getByRole('button', { name: '+ Agregar variante' }));
+    await user.click(screen.getByRole('button', { name: 'Agregar variante' }));
     await user.type(screen.getByLabelText('Color de la variante 1'), 'Azul');
     await user.click(screen.getByRole('button', { name: 'Crear producto' }));
 

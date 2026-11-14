@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/useAuth.js';
+import Alert from '../../components/Alert.jsx';
 import Button from '../../components/Button.jsx';
+import Icon from '../../components/Icon.jsx';
 import Input from '../../components/Input.jsx';
 import Spinner from '../../components/Spinner.jsx';
 import ThemeToggle from '../../components/ThemeToggle.jsx';
+import { BrandMark } from '../../layouts/PublicLayout.jsx';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -27,6 +30,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (status === 'loading') return <Spinner fullScreen label="Verificando sesión…" />;
   if (isAuthenticated && !submitting) return <Navigate to={from} replace />;
@@ -61,23 +65,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 dark:from-slate-950 via-white dark:via-slate-900 to-amber-50 dark:to-slate-950 px-4 py-10">
-      <ThemeToggle className="absolute right-4 top-4" />
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <span aria-hidden="true" className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-700 text-2xl font-bold text-white shadow-lg">
-            JF
-          </span>
-          <h1 className="mt-4 text-2xl font-bold text-slate-900 dark:text-slate-100">Panel Jean-Fabri</h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Inicia sesión para gestionar el inventario.</p>
+    <div className="relative flex min-h-screen flex-col items-center bg-slate-50 px-4 pb-10 pt-14 sm:pt-20 dark:bg-slate-950">
+      {/* Fondo decorativo: una franja azul arriba, como la cabecera de un cuaderno. El título va dentro de la franja y la tarjeta la cruza. */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-72 bg-brand-700 sm:h-80 dark:bg-brand-950" />
+      <ThemeToggle className="absolute right-4 top-4 text-white hover:bg-white/10 hover:text-white dark:text-slate-300" />
+
+      <div className="relative w-full max-w-sm animate-slide-up">
+        <div className="mb-6 text-center text-white">
+          <BrandMark className="mx-auto h-14 w-14 text-2xl shadow-lg ring-4 ring-white/20" />
+          <h1 className="mt-4 text-2xl font-bold">Panel Jean-Fabri</h1>
+          <p className="mt-1 text-sm text-brand-100">Inicia sesión para gestionar el inventario.</p>
         </div>
 
-        <form noValidate onSubmit={handleSubmit} className="space-y-5 rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-sm ring-1 ring-slate-200 dark:ring-slate-800">
-          {serverError && (
-            <div role="alert" className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/50 px-3 py-2.5 text-sm text-red-700 dark:text-red-300">
-              {serverError}
-            </div>
-          )}
+        <form noValidate onSubmit={handleSubmit} className="space-y-5 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
+          {serverError && <Alert>{serverError}</Alert>}
           <Input
             label="Correo electrónico"
             name="email"
@@ -90,23 +91,36 @@ export default function LoginPage() {
             error={errors.email}
             autoFocus
           />
-          <Input
-            label="Contraseña"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            value={form.password}
-            onChange={handleChange}
-            error={errors.password}
-          />
+          <div className="relative">
+            <Input
+              label="Contraseña"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={form.password}
+              onChange={handleChange}
+              error={errors.password}
+              className="[&_input]:pr-12"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={showPassword}
+              className="absolute right-1 top-[1.85rem] inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors duration-150 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+            >
+              <Icon name={showPassword ? 'eyeOff' : 'eye'} className="h-5 w-5" />
+            </button>
+          </div>
           <Button type="submit" fullWidth size="lg" loading={submitting}>
             {submitting ? 'Ingresando…' : 'Ingresar'}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm">
-          <Link to="/" className="font-medium text-brand-700 dark:text-brand-400 hover:underline">
-            ← Volver al catálogo
+          <Link to="/" className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 font-semibold text-brand-700 hover:underline dark:text-brand-400">
+            <Icon name="arrowLeft" className="h-4 w-4" />
+            Volver al catálogo
           </Link>
         </p>
       </div>

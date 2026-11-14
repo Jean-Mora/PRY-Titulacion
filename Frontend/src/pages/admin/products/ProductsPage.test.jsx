@@ -53,14 +53,14 @@ describe('ProductsPage', () => {
   it('el administrador ve crear, editar y eliminar', async () => {
     renderAs('admin');
     expect(await screen.findByRole('button', { name: 'Eliminar Lápiz HB' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: '+ Nuevo producto' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Nuevo producto' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Editar Lápiz HB' })).toHaveAttribute('href', '/admin/productos/p1');
   });
 
   it('vendedor: sin botones de crear, editar ni eliminar', async () => {
     renderAs('vendedor');
     await screen.findByText('Lápiz HB');
-    expect(screen.queryByRole('link', { name: '+ Nuevo producto' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Nuevo producto' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Eliminar/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /Editar/ })).not.toBeInTheDocument();
   });

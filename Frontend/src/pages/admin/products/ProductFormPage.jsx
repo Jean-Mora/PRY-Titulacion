@@ -6,6 +6,7 @@ import { useFetch } from '../../../hooks/useFetch.js';
 import { fieldErrors } from '../../../utils/apiErrors.js';
 import Alert from '../../../components/Alert.jsx';
 import Button from '../../../components/Button.jsx';
+import Icon from '../../../components/Icon.jsx';
 import Input from '../../../components/Input.jsx';
 import Select from '../../../components/Select.jsx';
 import Spinner from '../../../components/Spinner.jsx';
@@ -136,7 +137,10 @@ export default function ProductFormPage() {
     return (
       <div className="mx-auto max-w-3xl">
         <Alert>{loadError}</Alert>
-        <Link to="/admin/productos" className="mt-4 inline-block text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">← Volver a productos</Link>
+        <Link to="/admin/productos" className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">
+          <Icon name="arrowLeft" className="h-4 w-4" />
+          Volver a productos
+        </Link>
       </div>
     );
   }
@@ -145,13 +149,21 @@ export default function ProductFormPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link to="/admin/productos" className="text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">← Productos</Link>
+      <Link to="/admin/productos" className="inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline dark:text-brand-400">
+        <Icon name="arrowLeft" className="h-4 w-4" />
+        Productos
+      </Link>
       <h1 className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">{isNew ? 'Nuevo producto' : form.name || 'Editar producto'}</h1>
+      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        {isNew ? 'Completa los datos generales y, si aplica, sus variantes.' : 'Edita los datos generales y las variantes. El stock se cambia con movimientos de inventario.'}
+      </p>
 
       <form noValidate onSubmit={submit} className="mt-6 space-y-6">
         {serverError && <Alert>{serverError}</Alert>}
 
-        <section className="grid gap-4 rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:grid-cols-2 dark:bg-slate-900 dark:ring-slate-800">
+        <section aria-labelledby="datos-title" className="rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
+          <h2 id="datos-title" className="border-b border-slate-200 px-5 py-3 font-semibold text-slate-900 dark:border-slate-800 dark:text-slate-100">Datos generales</h2>
+          <div className="grid gap-4 p-5 sm:grid-cols-2">
           <Input label="SKU" name="sku" value={form.sku} onChange={change} error={errors.sku} maxLength={40} className="sm:col-span-1" inputMode="text" autoCapitalize="characters" hint="Código interno, p. ej. CUA-100." />
           <Input label="Nombre" name="name" value={form.name} onChange={change} error={errors.name} maxLength={120} />
           <div>
@@ -179,23 +191,24 @@ export default function ProductFormPage() {
             <legend className="mb-1.5 text-sm font-medium text-slate-700 dark:text-slate-300">Etiquetas y estado</legend>
             <div className="flex flex-wrap gap-x-6 gap-y-2">
               {TAG_OPTIONS.map((t) => (
-                <label key={t.value} className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                  <input type="checkbox" className="h-4 w-4 rounded border-slate-300 text-brand-700 dark:border-slate-600" checked={form.tags.includes(t.value)} onChange={() => toggleTag(t.value)} />
+                <label key={t.value} className="inline-flex min-h-11 items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <input type="checkbox" className="h-4 w-4 rounded border-slate-300 accent-brand-700 dark:border-slate-600" checked={form.tags.includes(t.value)} onChange={() => toggleTag(t.value)} />
                   {t.label}
                 </label>
               ))}
-              <label className="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                <input type="checkbox" name="active" className="h-4 w-4 rounded border-slate-300 text-brand-700 dark:border-slate-600" checked={form.active} onChange={change} />
+              <label className="inline-flex min-h-11 items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                <input type="checkbox" name="active" className="h-4 w-4 rounded border-slate-300 accent-brand-700 dark:border-slate-600" checked={form.active} onChange={change} />
                 Activo (visible en el catálogo)
               </label>
             </div>
           </fieldset>
+          </div>
         </section>
 
         <VariantEditor rows={rows} onChange={(next) => { setRows(next); setErrors((errs) => ({ ...errs, variants: undefined })); }} productSku={form.sku} errors={errors} />
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Link to="/admin/productos" className="inline-flex items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800">
+          <Link to="/admin/productos" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 transition-colors duration-150 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700 dark:hover:bg-slate-800">
             Cancelar
           </Link>
           <Button type="submit" loading={saving}>{isNew ? 'Crear producto' : 'Guardar cambios'}</Button>

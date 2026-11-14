@@ -5,6 +5,7 @@ import { fieldErrors } from '../../../utils/apiErrors.js';
 import Alert from '../../../components/Alert.jsx';
 import Button from '../../../components/Button.jsx';
 import EmptyState from '../../../components/EmptyState.jsx';
+import Icon from '../../../components/Icon.jsx';
 import Input from '../../../components/Input.jsx';
 import Modal from '../../../components/Modal.jsx';
 import Spinner from '../../../components/Spinner.jsx';
@@ -36,7 +37,7 @@ export default function CategoriesPage() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Categorías</h1>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Agrupan los productos del catálogo.</p>
         </div>
-        <Button onClick={() => { setNotice(''); setEditing('new'); }}>+ Nueva categoría</Button>
+        <Button icon="plus" onClick={() => { setNotice(''); setEditing('new'); }}>Nueva categoría</Button>
       </div>
 
       {notice && <Alert tone="success" className="mt-4">{notice}</Alert>}
@@ -47,10 +48,15 @@ export default function CategoriesPage() {
         ) : error ? (
           <Alert>
             {error.message}{' '}
-            <button type="button" className="font-semibold underline" onClick={reload}>Reintentar</button>
+            <button type="button" className="font-semibold underline underline-offset-2" onClick={reload}>Reintentar</button>
           </Alert>
         ) : categories.length === 0 ? (
-          <EmptyState icon="🗂️" title="Aún no hay categorías" description="Crea la primera, por ejemplo “Útiles escolares” u “Oficina”." />
+          <EmptyState
+            icon="folder"
+            title="Aún no hay categorías"
+            description="Crea la primera, por ejemplo “Útiles escolares” u “Oficina”."
+            action={<Button icon="plus" onClick={() => { setNotice(''); setEditing('new'); }}>Crear la primera categoría</Button>}
+          />
         ) : (
           <div className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
             <table className="w-full text-left text-sm">
@@ -64,7 +70,7 @@ export default function CategoriesPage() {
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                 {categories.map((c) => (
-                  <tr key={c._id}>
+                  <tr key={c._id} className="transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td className="px-4 py-3">
                       <p className="font-medium text-slate-900 dark:text-slate-100">{c.name}</p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">/categoria/{c.slug}</p>
@@ -73,10 +79,10 @@ export default function CategoriesPage() {
                     <td className="px-4 py-3 text-right tabular-nums text-slate-700 dark:text-slate-300">{c.productCount}</td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => { setNotice(''); setEditing(c); }} aria-label={`Editar ${c.name}`}>
+                        <Button variant="ghost" size="sm" icon="pencil" onClick={() => { setNotice(''); setEditing(c); }} aria-label={`Editar ${c.name}`}>
                           Editar
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => { setNotice(''); setToDelete(c); }} aria-label={`Eliminar ${c.name}`} className="text-red-600 dark:text-red-400">
+                        <Button variant="ghost" size="sm" icon="trash" onClick={() => { setNotice(''); setToDelete(c); }} aria-label={`Eliminar ${c.name}`} className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300">
                           Eliminar
                         </Button>
                       </div>
