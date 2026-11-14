@@ -30,7 +30,7 @@ const variantSchema = new Schema(
       validate: { validator: Number.isInteger, message: 'El stock debe ser un número entero' },
     },
   },
-  { _id: true },
+  { _id: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
 /** Nombre legible de la variante: "Azul · A4" o "Única". */
@@ -68,6 +68,14 @@ const productSchema = new Schema(
 productSchema.index({ categoryId: 1 });
 productSchema.index({ name: 'text' }, { default_language: 'spanish' });
 productSchema.index({ 'variants.sku': 1 });
+
+/** Categoría poblada bajo demanda: .populate('category', 'name slug'). categoryId sigue siendo el id. */
+productSchema.virtual('category', {
+  ref: 'Category',
+  localField: 'categoryId',
+  foreignField: '_id',
+  justOne: true,
+});
 
 /** Stock total = suma de las variantes (calculado, no se guarda). */
 productSchema.virtual('stock').get(function totalStock() {

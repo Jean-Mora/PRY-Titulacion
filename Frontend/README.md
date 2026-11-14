@@ -68,18 +68,19 @@ Frontend/
 ├── .env.example
 ├── docs/BITACORA.md         Registro de cambios por incremento
 └── src/
-    ├── main.jsx             Punto de entrada (Router + AuthProvider)
+    ├── main.jsx             Punto de entrada (ThemeProvider + Router + AuthProvider)
     ├── App.jsx              Rutas; el panel se carga con React.lazy
-    ├── index.css            Tailwind + paleta de la marca
+    ├── index.css            Tailwind + paleta de la marca + variante dark (modo oscuro)
     ├── api/http.js          Único cliente HTTP: URL base, JWT, manejo de 401
-    ├── api/auth.js          login() y me()
-    ├── context/AuthContext.jsx
-    ├── hooks/useAuth.js
-    ├── components/          Button, Input, Spinner, EmptyState
+    ├── api/                 auth.js, categories.js, products.js
+    ├── context/             AuthContext (sesión), ThemeContext (claro/oscuro/sistema)
+    ├── hooks/               useAuth, useTheme, useFetch, useDebounce
+    ├── components/          Button, Input, Select, Textarea, Modal, Badge, Alert,
+    │                        Pagination, Spinner, EmptyState, ThemeToggle
     ├── layouts/             PublicLayout, AdminLayout
     ├── routes/              ProtectedRoute, adminRoutes (secciones, roles, menú)
-    ├── pages/               catalog/, auth/, admin/
-    ├── utils/roles.js       Roles y verificación de permisos
+    ├── pages/               catalog/, auth/, admin/ (categories/, products/)
+    ├── utils/               roles.js, format.js (USD es-EC), apiErrors.js
     └── test/                Configuración y utilidades de pruebas
 ```
 
@@ -91,7 +92,18 @@ Frontend/
 - `api/http.js` es el único lugar que conoce la URL base y el token.
 - Las pruebas viven junto al archivo que prueban (`Archivo.test.jsx`).
 
-## Contrato esperado con el backend (incremento 1)
+## Modo oscuro
+
+Botón de tema (ícono de monitor / sol / luna) en el catálogo, el login y el panel. Cada clic pasa a
+la siguiente opción: **sistema → claro → oscuro**. La preferencia se guarda en el navegador
+(`localStorage.jf_theme`); "sistema" sigue al modo del sistema operativo.
+Para estilos nuevos, agrega la variante `dark:` junto a cada color claro (ver `docs/BITACORA.md`).
+
+## Contrato con el backend
+
+Productos y categorías: ver la tabla de endpoints en `Backend/README.md`.
+
+### Autenticación (incremento 1)
 
 | Endpoint | Envía | Recibe |
 |---|---|---|

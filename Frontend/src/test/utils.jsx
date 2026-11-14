@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
 import { AuthProvider } from '../context/AuthContext.jsx';
+import { ThemeProvider } from '../context/ThemeContext.jsx';
 
 /** Respuesta falsa de fetch con cuerpo JSON. */
 export function jsonResponse(body, status = 200) {
@@ -20,11 +21,13 @@ export function mockFetch(routes) {
   return fn;
 }
 
-/** Renderiza con router en memoria y sesión real (AuthProvider). */
+/** Renderiza con tema, router en memoria y sesión real (AuthProvider). */
 export function renderWithProviders(ui, { route = '/' } = {}) {
   return render(
-    <MemoryRouter initialEntries={[route]}>
-      <AuthProvider>{ui}</AuthProvider>
-    </MemoryRouter>,
+    <ThemeProvider>
+      <MemoryRouter initialEntries={[route]}>
+        <AuthProvider>{ui}</AuthProvider>
+      </MemoryRouter>
+    </ThemeProvider>,
   );
 }

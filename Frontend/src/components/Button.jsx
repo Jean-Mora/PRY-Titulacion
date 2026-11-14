@@ -3,9 +3,9 @@ import Spinner from './Spinner.jsx';
 const VARIANTS = {
   primary: 'bg-brand-700 text-white hover:bg-brand-800 focus-visible:outline-brand-700',
   secondary:
-    'bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus-visible:outline-brand-700',
+    'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus-visible:outline-brand-700',
   danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600',
-  ghost: 'text-slate-600 hover:bg-slate-100 focus-visible:outline-brand-700',
+  ghost: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-brand-700',
 };
 
 const SIZES = {

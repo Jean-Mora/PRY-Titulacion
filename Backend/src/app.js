@@ -12,6 +12,8 @@ const { isDBConnected } = require('./config/db');
 const { errorHandler, notFound } = require('./middlewares/errorHandler');
 const authRoutes = require('./modules/auth/auth.routes');
 const usersRoutes = require('./modules/users/users.routes');
+const categoriesRoutes = require('./modules/categories/categories.routes');
+const productsRoutes = require('./modules/products/products.routes');
 
 function createApp(options = {}) {
   const { loginRateLimit = env.LOGIN_RATE_LIMIT } = options;
@@ -34,6 +36,8 @@ function createApp(options = {}) {
 
   app.use('/api/auth', authRoutes({ loginRateLimit }));
   app.use('/api/users', usersRoutes);
+  app.use('/api/categories', categoriesRoutes);
+  app.use('/api/products', productsRoutes);
 
   app.use(notFound);
   app.use(errorHandler);

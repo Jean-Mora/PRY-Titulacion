@@ -4,8 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Catálogo digital de Papelería Jean-Fabri: útiles escolares, oficina, arte y bazar." />
-    <meta name="theme-color" content="#1d4ed8" />
+    <meta name="theme-color" content="#1d4ed8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
     <title>Papelería Jean-Fabri</title>
+    <script>
+      // Aplica el tema antes de que React pinte, para evitar el destello blanco
+      // al abrir en modo oscuro. Misma lógica que src/context/ThemeContext.jsx.
+      (function () {
+        var pref = 'system';
+        try {
+          pref = localStorage.getItem('jf_theme') || 'system';
+        } catch (e) {}
+        var dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
