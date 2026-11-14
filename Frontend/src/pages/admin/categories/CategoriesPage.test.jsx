@@ -48,7 +48,7 @@ describe('CategoriesPage', () => {
     const user = userEvent.setup();
 
     await screen.findByText('Aún no hay categorías');
-    await user.click(screen.getByRole('button', { name: '+ Nueva categoría' }));
+    await user.click(screen.getByRole('button', { name: 'Nueva categoría' }));
     const dialog = screen.getByRole('dialog', { name: 'Nueva categoría' });
     await user.type(within(dialog).getByLabelText('Nombre'), '  Oficina ');
     await user.click(within(dialog).getByRole('button', { name: 'Crear' }));
@@ -64,7 +64,7 @@ describe('CategoriesPage', () => {
     const fetch = renderPage({ 'GET /api/categories': () => jsonResponse({ items: [] }) });
     const user = userEvent.setup();
     await screen.findByText('Aún no hay categorías');
-    await user.click(screen.getByRole('button', { name: '+ Nueva categoría' }));
+    await user.click(screen.getByRole('button', { name: 'Nueva categoría' }));
     await user.click(screen.getByRole('button', { name: 'Crear' }));
     expect(screen.getByText('El nombre debe tener al menos 2 caracteres.')).toBeInTheDocument();
     expect(fetch.mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);

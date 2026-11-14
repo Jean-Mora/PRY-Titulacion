@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from 'react';
+import Icon from './Icon.jsx';
 
 /**
  * Ventana modal accesible: role="dialog", título enlazado, cierra con Escape
@@ -36,14 +37,14 @@ export default function Modal({ open, title, onClose, children, footer, size = '
 
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center p-0 sm:items-center sm:p-4">
-      <button type="button" aria-label="Cerrar" tabIndex={-1} className="absolute inset-0 bg-slate-900/50 dark:bg-black/60" onClick={onClose} />
+      <button type="button" aria-label="Cerrar" tabIndex={-1} className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] animate-fade-in dark:bg-black/60" onClick={onClose} />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={`relative w-full ${width} max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white shadow-xl ring-1 ring-slate-200 focus:outline-none sm:rounded-2xl dark:bg-slate-900 dark:ring-slate-800`}
+        className={`relative w-full ${width} max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white shadow-xl ring-1 ring-slate-200 animate-slide-up focus:outline-none sm:rounded-2xl dark:bg-slate-900 dark:ring-slate-800`}
       >
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 dark:border-slate-800">
           <h2 id={titleId} className="text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -54,11 +55,9 @@ export default function Modal({ open, title, onClose, children, footer, size = '
             data-modal-close
             aria-label="Cerrar ventana"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
+            className="-mr-2 inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
           >
-            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
-            </svg>
+            <Icon name="close" className="h-5 w-5" strokeWidth={2} />
           </button>
         </div>
         <div className="px-5 py-4">{children}</div>

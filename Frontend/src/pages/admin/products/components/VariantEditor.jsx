@@ -41,14 +41,14 @@ export default function VariantEditor({ rows, onChange, productSku, errors = {} 
   };
 
   return (
-    <fieldset className="rounded-xl ring-1 ring-slate-200 dark:ring-slate-800">
+    <fieldset className="rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
       <legend className="sr-only">Variantes</legend>
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-4 py-3 dark:border-slate-800">
         <div>
           <h2 className="font-semibold text-slate-900 dark:text-slate-100">Variantes</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">Color, tamaño o modelo. El stock se registra con movimientos de inventario.</p>
         </div>
-        <Button variant="secondary" size="sm" onClick={add}>+ Agregar variante</Button>
+        <Button variant="secondary" size="sm" icon="plus" onClick={add}>Agregar variante</Button>
       </div>
 
       {errors.variants && <p className="px-4 pt-3 text-sm text-red-600 dark:text-red-400">{errors.variants}</p>}
@@ -85,6 +85,7 @@ export default function VariantEditor({ rows, onChange, productSku, errors = {} 
                     <Button
                       variant="ghost"
                       size="sm"
+                      icon="trash"
                       onClick={() => remove(r.key)}
                       disabled={r.stock > 0}
                       title={r.stock > 0 ? 'Tiene stock: registra un ajuste a 0 antes de quitarla' : undefined}

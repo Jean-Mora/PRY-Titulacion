@@ -37,7 +37,7 @@ export default function App() {
           <Route path="categoria/:slug" element={<CatalogPage />} />
           <Route
             path="producto/:slug"
-            element={<EmptyState icon="🖊️" title="Detalle de producto" description="Disponible en el incremento 4." />}
+            element={<EmptyState icon="tag" title="Detalle de producto" description="Disponible en el incremento 4." />}
           />
           <Route path="*" element={<NotFoundPage />} />
         </Route>

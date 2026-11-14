@@ -27,7 +27,7 @@ export default function ProtectedRoute({ roles, children }) {
   if (!hasRole(user, roles)) {
     return (
       <EmptyState
-        icon="🔒"
+        icon="lock"
         title="Acceso restringido"
         description="Tu rol no tiene permiso para ver esta sección. Si crees que es un error, habla con el administrador."
       />

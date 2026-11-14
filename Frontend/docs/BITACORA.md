@@ -206,3 +206,81 @@ las descarga.
 
 - `ImportCsvPage` (vista previa y errores por fila).
 - Subida de imagen del producto (cuando el backend tenga S3).
+
+---
+
+## Incremento 2 — parte 2: mejoras de interfaz (UI/UX)
+
+- **Fecha:** 13 de noviembre de 2026
+- **Rama:** `inc-2/products`
+- **Motivo:** revisión de la interfaz con la guía de diseño *UI/UX Pro Max* (lista de verificación:
+  sin emojis como íconos, objetivos táctiles de 44 px, foco visible, `prefers-reduced-motion`,
+  cursor en lo que se pulsa, contraste, responsive en 375/768/1024 px). Se mantiene la paleta de la
+  marca (azul + amarillo lápiz): la guía sugería verde "farmacia", que no corresponde a una papelería.
+  Estilo elegido: **diseño plano** (sin degradados pesados, sombras suaves, transiciones de 150 ms).
+
+### 1. Base de estilos (`src/index.css`, `index.html`)
+
+| Qué | Detalle |
+|---|---|
+| Tipografía | **Rubik** para títulos (`font-heading`) y **Nunito Sans** para el texto (`font-sans`), cargadas desde Google Fonts con `display=swap` y `preconnect`. Si no llegan, se usa la fuente del sistema. Pareja recomendada por la guía para comercio. |
+| Tokens | Tonos `brand-200`, `accent-100/300/600`; duraciones y animaciones `fade-in`, `slide-up`, `slide-in-left` definidas en `@theme` (Tailwind v4). |
+| Cursor | `cursor: pointer` global en botones (Tailwind v4 ya no lo pone). |
+| Foco | `:focus-visible` uniforme (anillo azul, 2 px) para teclado en toda la app; se quitaron los estilos de foco repetidos en cada componente. |
+| Movimiento reducido | `@media (prefers-reduced-motion: reduce)` anula animaciones y transiciones. |
+| Títulos | `text-wrap: balance` (evita una palabra huérfana en la última línea). |
+| Saltar al contenido | Clase `.skip-link`: enlace visible solo al enfocarlo con teclado; lleva a `#contenido` en ambos layouts. |
+
+### 2. Íconos SVG (`components/Icon.jsx`)
+
+Se reemplazaron **todos los emojis** (menú, accesos rápidos, estados vacíos, 404) por una sola
+familia de íconos SVG en línea (trazos de Heroicons, MIT) sin agregar dependencias.
+`<Icon name="box" />` es decorativo por defecto (`aria-hidden`); con `label` se expone como imagen.
+`adminRoutes.js` ahora guarda el **nombre** del ícono (`home`, `receipt`, `chat`, `box`, `upload`,
+`folder`, `chart`, `book`, `trending`, `users`).
+
+### 3. Componentes
+
+| Archivo | Cambio |
+|---|---|
+| `Button.jsx` | Altura mínima 44 px (`md`/`lg`) y 36 px (`sm`, acciones de tabla); prop `icon`; estado `active`; sombra suave en `primary`/`secondary`. |
+| `ThemeToggle.jsx` | Área táctil de 44 × 44 px. |
+| `Alert.jsx` | Ícono por tono (error, éxito, info): el color ya no es la única señal. |
+| `EmptyState.jsx` | Ícono SVG dentro de un recuadro azul claro; entrada con `fade-in`. |
+| `Pagination.jsx` | Flechas como íconos; número de página resaltado. |
+| `Modal.jsx` | Fondo con desenfoque y `fade-in`; panel con `slide-up`; botón de cierre de 40 px. |
+
+### 4. Layouts y pantallas
+
+| Archivo | Cambio |
+|---|---|
+| `layouts/PublicLayout.jsx` | `BrandMark` (logo: iniciales sobre azul con esquina amarilla, exportado para reutilizar). Buscador con ícono y 44 px de alto; "Ingresar" con candado; pie con logo y botón de WhatsApp con ícono. |
+| `layouts/AdminLayout.jsx` | Menú lateral fijo (`sticky`) con íconos y estado activo resaltado; avatar con iniciales del usuario; "Cerrar sesión" solo con ícono en móvil. Cajón móvil: entra deslizándose, se cierra con **Escape**, al navegar o con el botón ✕; ancho 85 % máx. |
+| `pages/auth/LoginPage.jsx` | Franja azul superior (como la cabecera de un cuaderno) con el título encima y la tarjeta cruzándola; botón **mostrar/ocultar contraseña** (`aria-pressed`); errores con `Alert`. |
+| `pages/admin/DashboardPage.jsx` | Saludo con el primer nombre; tarjeta de alertas con ícono de campana; accesos rápidos con ícono, descripción y flecha; `hover` con elevación. |
+| `pages/catalog/CatalogPage.jsx` | **Portada nueva**: cabecera azul con titular y llamados a la acción ("Ver categorías", "Cotizar por WhatsApp"), tres beneficios y la **lista de categorías** real (`GET /api/categories`, público) con enlaces a `/categoria/:slug`. La cuadrícula de productos sigue siendo del incremento 4. |
+| `pages/admin/products/ProductsPage.jsx` | Botón "Nuevo producto" con ícono; acciones "Editar"/"Eliminar" con ícono; filas con `hover`; en móvil se ocultan **Categoría** (< 768 px) y **Costo** (< 1024 px) para que la tabla casi no necesite desplazarse. `aria-busy` al recargar. |
+| `pages/admin/categories/CategoriesPage.jsx` | Botones con ícono; estado vacío con acción "Crear la primera categoría"; filas con `hover`. |
+| `pages/admin/products/ProductFormPage.jsx` | Sección "Datos generales" con título; texto de ayuda bajo el título; casillas con `accent-brand-700` (antes el color no se aplicaba) y 44 px de alto; enlaces "Volver" con flecha. |
+| `VariantEditor.jsx` | Tarjeta blanca; botones con ícono. |
+| `routes/ProtectedRoute.jsx`, `NotFoundPage.jsx`, `App.jsx` | Íconos `lock`, `compass`, `tag`. |
+
+### 5. Pruebas
+
+Se ajustaron 3 pruebas porque el "+" de los botones ahora es un ícono: `'+ Nuevo producto'` →
+`'Nuevo producto'`, `'+ Nueva categoría'` → `'Nueva categoría'`, `'+ Agregar variante'` →
+`'Agregar variante'`. **8 archivos, 32 pruebas, todas pasan.** `npm run build` correcto; el
+catálogo sigue sin descargar el código del panel.
+
+### 6. Verificación en el navegador (API simulada en la consola, sin backend)
+
+- Portada pública, login, panel de inicio y listado de productos en **claro y oscuro**.
+- Login: mostrar/ocultar contraseña; entrada al panel con rol admin.
+- **Móvil (390 px):** sin desplazamiento horizontal de la página (`scrollWidth` = 390); cajón del
+  menú con íconos; tabla de productos con columnas ocultas.
+- Sin errores en la consola.
+
+### Pendiente
+
+- `ImportCsvPage` y la subida de imagen (parte 3 del incremento 2).
+- Las fuentes de Google requieren internet; si el propietario las usa sin conexión se ve la fuente del sistema (aceptable).

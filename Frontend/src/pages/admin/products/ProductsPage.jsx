@@ -11,6 +11,7 @@ import Alert from '../../../components/Alert.jsx';
 import Badge from '../../../components/Badge.jsx';
 import Button from '../../../components/Button.jsx';
 import EmptyState from '../../../components/EmptyState.jsx';
+import Icon from '../../../components/Icon.jsx';
 import Input from '../../../components/Input.jsx';
 import Modal from '../../../components/Modal.jsx';
 import Pagination from '../../../components/Pagination.jsx';
@@ -93,9 +94,10 @@ export default function ProductsPage() {
         {isAdmin && (
           <Link
             to="/admin/productos/nuevo"
-            className="inline-flex items-center justify-center rounded-lg bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-brand-800"
           >
-            + Nuevo producto
+            <Icon name="plus" className="h-5 w-5" strokeWidth={2} />
+            Nuevo producto
           </Link>
         )}
       </div>
@@ -132,24 +134,24 @@ export default function ProductsPage() {
         ) : error ? (
           <Alert>
             {error.message}{' '}
-            <button type="button" className="font-semibold underline" onClick={reload}>Reintentar</button>
+            <button type="button" className="font-semibold underline underline-offset-2" onClick={reload}>Reintentar</button>
           </Alert>
         ) : data.items.length === 0 ? (
           <EmptyState
-            icon="📦"
+            icon={hasFilters ? 'search' : 'box'}
             title={hasFilters ? 'Sin resultados' : 'Aún no hay productos'}
             description={hasFilters ? 'Prueba con otra búsqueda o quita los filtros.' : isAdmin ? 'Crea el primer producto del catálogo.' : undefined}
           />
         ) : (
           <>
-            <div className={`overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800 ${loading ? 'opacity-60' : ''}`}>
-              <table className="w-full min-w-[640px] text-left text-sm">
+            <div className={`overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-slate-200 transition-opacity duration-150 dark:bg-slate-900 dark:ring-slate-800 ${loading ? 'opacity-60' : ''}`} aria-busy={loading || undefined}>
+              <table className="w-full min-w-[560px] text-left text-sm">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
                   <tr>
                     <th scope="col" className="px-4 py-3">Producto</th>
-                    <th scope="col" className="px-4 py-3">Categoría</th>
+                    <th scope="col" className="hidden px-4 py-3 md:table-cell">Categoría</th>
                     <th scope="col" className="px-4 py-3 text-right">Precio</th>
-                    <th scope="col" className="px-4 py-3 text-right">Costo</th>
+                    <th scope="col" className="hidden px-4 py-3 text-right lg:table-cell">Costo</th>
                     <th scope="col" className="px-4 py-3 text-right">Stock</th>
                     <th scope="col" className="px-4 py-3">Estado</th>
                     {isAdmin && <th scope="col" className="px-4 py-3"><span className="sr-only">Acciones</span></th>}
@@ -157,7 +159,7 @@ export default function ProductsPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                   {data.items.map((p) => (
-                    <tr key={p._id}>
+                    <tr key={p._id} className="transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                       <td className="px-4 py-3">
                         <p className="font-medium text-slate-900 dark:text-slate-100">
                           {isAdmin ? (
@@ -172,9 +174,9 @@ export default function ProductsPage() {
                           {p.tags?.includes('oferta') && <Badge tone="warning" className="ml-2">Oferta</Badge>}
                         </p>
                       </td>
-                      <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{p.category?.name ?? '—'}</td>
+                      <td className="hidden px-4 py-3 text-slate-600 md:table-cell dark:text-slate-400">{p.category?.name ?? '—'}</td>
                       <td className="px-4 py-3 text-right tabular-nums text-slate-900 dark:text-slate-100">{formatUSD(p.price)}</td>
-                      <td className="px-4 py-3 text-right tabular-nums text-slate-500 dark:text-slate-400">{formatUSD(p.cost)}</td>
+                      <td className="hidden px-4 py-3 text-right tabular-nums text-slate-500 lg:table-cell dark:text-slate-400">{formatUSD(p.cost)}</td>
                       <td className="px-4 py-3 text-right"><StockBadge stock={p.stock} stockMin={p.stockMin} /></td>
                       <td className="px-4 py-3">{p.active ? <Badge tone="success">Activo</Badge> : <Badge>Inactivo</Badge>}</td>
                       {isAdmin && (
@@ -183,11 +185,12 @@ export default function ProductsPage() {
                             <Link
                               to={`/admin/productos/${p._id}`}
                               aria-label={`Editar ${p.name}`}
-                              className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                             >
+                              <Icon name="pencil" className="h-4 w-4" />
                               Editar
                             </Link>
-                            <Button variant="ghost" size="sm" className="text-red-600 dark:text-red-400" aria-label={`Eliminar ${p.name}`} onClick={() => { setNotice(''); setToDelete(p); }}>
+                            <Button variant="ghost" size="sm" icon="trash" className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950/40 dark:hover:text-red-300" aria-label={`Eliminar ${p.name}`} onClick={() => { setNotice(''); setToDelete(p); }}>
                               Eliminar
                             </Button>
                           </div>

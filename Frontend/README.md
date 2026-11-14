@@ -70,12 +70,12 @@ Frontend/
 └── src/
     ├── main.jsx             Punto de entrada (ThemeProvider + Router + AuthProvider)
     ├── App.jsx              Rutas; el panel se carga con React.lazy
-    ├── index.css            Tailwind + paleta de la marca + variante dark (modo oscuro)
+    ├── index.css            Tailwind, paleta de la marca, tipografía, foco, reduced-motion, variante dark
     ├── api/http.js          Único cliente HTTP: URL base, JWT, manejo de 401
     ├── api/                 auth.js, categories.js, products.js
     ├── context/             AuthContext (sesión), ThemeContext (claro/oscuro/sistema)
     ├── hooks/               useAuth, useTheme, useFetch, useDebounce
-    ├── components/          Button, Input, Select, Textarea, Modal, Badge, Alert,
+    ├── components/          Icon (SVG), Button, Input, Select, Textarea, Modal, Badge, Alert,
     │                        Pagination, Spinner, EmptyState, ThemeToggle
     ├── layouts/             PublicLayout, AdminLayout
     ├── routes/              ProtectedRoute, adminRoutes (secciones, roles, menú)
@@ -91,6 +91,10 @@ Frontend/
 - Las páginas no llaman a `fetch`; usan las funciones de `api/`.
 - `api/http.js` es el único lugar que conoce la URL base y el token.
 - Las pruebas viven junto al archivo que prueban (`Archivo.test.jsx`).
+- **Íconos:** solo SVG mediante `<Icon name="..." />` (`src/components/Icon.jsx`); nunca emojis.
+- **Objetivos táctiles:** botones y enlaces de acción con al menos 44 px de alto (`min-h-11`);
+  acciones de tabla con 36 px (`size="sm"`).
+- **Tipografía:** títulos con `font-heading` (Rubik) — ya aplicado a `h1`–`h3` —; texto con Nunito Sans.
 
 ## Modo oscuro
 

@@ -7,10 +7,17 @@
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Paleta de la marca Jean-Fabri: azul escolar + acento amarillo lápiz. */
+/*
+ * Tokens de diseño de la marca Jean-Fabri.
+ * - brand: azul escolar (botones, enlaces, estado activo).
+ * - accent: amarillo lápiz (detalles y etiquetas "Nuevo").
+ * - Tipografía: Rubik para títulos, Nunito Sans para el texto (se cargan en
+ *   index.html; si no llegan, se usa la fuente del sistema).
+ */
 @theme {
   --color-brand-50: #eff6ff;
   --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
   --color-brand-300: #93c5fd;
   --color-brand-400: #60a5fa;
   --color-brand-500: #3b82f6;
@@ -19,25 +26,94 @@
   --color-brand-800: #1e40af;
   --color-brand-900: #1e3a8a;
   --color-brand-950: #172554;
+  --color-accent-100: #fef9c3;
+  --color-accent-300: #fde047;
   --color-accent-400: #facc15;
   --color-accent-500: #eab308;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --color-accent-600: #ca8a04;
+
+  --font-sans: "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Rubik", "Nunito Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Duraciones: 150 ms para cambios de color, 200–250 ms para entradas. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 200ms var(--ease-out-soft) both;
+  --animate-slide-up: slide-up 250ms var(--ease-out-soft) both;
+  --animate-slide-in-left: slide-in-left 250ms var(--ease-out-soft) both;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-in-left {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  /* Controles nativos (scroll, selects, calendarios) acordes al tema. */
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  /* Todo lo que se puede pulsar muestra la mano (Tailwind v4 ya no lo hace solo). */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
+  /* Foco visible por teclado, igual en toda la app. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+  .dark :focus-visible {
+    outline-color: var(--color-brand-400);
+  }
+
+  /* Respeta "reducir movimiento" del sistema: sin animaciones ni transiciones. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
-/* Controles nativos (scroll, selects, calendarios) acordes al tema. */
-html {
-  color-scheme: light;
-}
-html.dark {
-  color-scheme: dark;
-}
-
-body {
-  @apply bg-slate-50 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200;
+@layer components {
+  /* Enlace para saltar al contenido con el teclado (visible solo al enfocarlo). */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white;
+  }
 }

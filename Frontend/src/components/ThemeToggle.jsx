@@ -20,6 +20,7 @@ const ICONS = {
 /**
  * Botón de tema: cada clic pasa a la siguiente opción
  * (sistema → claro → oscuro). El ícono muestra la opción actual.
+ * Área táctil de 44 px.
  */
 export default function ThemeToggle({ className = '' }) {
   const { theme, cycleTheme } = useTheme();
@@ -30,9 +31,9 @@ export default function ThemeToggle({ className = '' }) {
       onClick={cycleTheme}
       aria-label={`${LABELS[theme]}. Cambiar a tema ${NEXT[theme]}`}
       title={`${LABELS[theme]} (clic para cambiar a ${NEXT[theme]})`}
-      className={`rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white ${className}`}
+      className={`inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white ${className}`}
     >
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75">
         {ICONS[theme]}
       </svg>
     </button>
